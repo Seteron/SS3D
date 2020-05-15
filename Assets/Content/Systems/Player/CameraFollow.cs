@@ -41,7 +41,7 @@ namespace SS3D.Content.Systems.Player
             // Set the player height based on the character controller, if one is found
             var character = target.GetComponent<CharacterController>();
             if (character)
-                playerOffset = new Vector3(0, target.GetComponent<CharacterController>().height);
+                playerOffset = new Vector3(0, target.GetComponent<CharacterController>().height-0.75f);
         }
 
         /**
