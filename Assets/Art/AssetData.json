@@ -1,0 +1,29 @@
+{
+    "AssetData":
+    {
+        "Sprites":
+        {
+            "Interactions":
+            {
+                "Take": "take.png",
+                "Discard": "discard.png",
+                "Build": "build.png",
+                "Door": "door.png"
+            }
+        },
+
+        "Sounds":
+        {
+            "Objects":
+            {
+                "Eat": "eat01.ogg",
+                "Bikehorn": "bikehorn.ogg",
+                "Airlock":
+                {
+                    "Open": "airlock_open.ogg",
+                    "Close": "airlock_close.ogg"
+                }
+            }               
+        }
+    }
+}
