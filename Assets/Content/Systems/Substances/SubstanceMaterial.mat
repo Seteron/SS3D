@@ -25,12 +25,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _FillAmount: 0
-    - _Rim: 0
+    - _Height: 1
+    - _Rim: 0.0626
     - _RimPower: 0
     - _WobbleX: 0
     - _WobbleZ: 0
     m_Colors:
     - _FoamColor: {r: 0.9433962, g: 0.9433962, b: 0.9433962, a: 1}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Tint: {r: 0.40392143, g: 0.55294114, b: 0.72156864, a: 1}
+    - _Tint: {r: 0.4039214, g: 0.55294114, b: 0.72156864, a: 1}
     - _TopColor: {r: 0.40392157, g: 0.5529412, b: 0.72156864, a: 1}

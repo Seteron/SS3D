@@ -89,7 +89,7 @@ namespace SS3D.Engine.Substances
 
         public bool CanTranfer()
         {
-            return Locked;
+            return !Locked;
         }
 
         /// <summary>
@@ -210,6 +210,7 @@ namespace SS3D.Engine.Substances
                     Substances[i] = entry;
                 }
             }
+            MarkDirty();
         }
 
         /// <summary>
@@ -243,6 +244,8 @@ namespace SS3D.Engine.Substances
                     Substances[i] = entry;
                 }
             }
+            MarkDirty();
+            other.MarkDirty();
         }
 
         /// <summary>

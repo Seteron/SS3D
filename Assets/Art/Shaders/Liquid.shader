@@ -4,7 +4,7 @@
     {
         _Tint ("Tint", Color) = (1,1,1,1)
         _MainTex ("Texture", 2D) = "white" {}
-        _FillAmount ("Fill Amount", Range(-10, 10)) = 0.0
+        _FillAmount ("Fill Amount", Range(0, 1)) = 0.0
         [HideInInspector] _WobbleX ("WobbleX", Range(-1,1)) = 0.0
         [HideInInspector] _WobbleZ ("WobbleZ", Range(-1,1)) = 0.0
         _TopColor ("Top Color", Color) = (1,1,1,1)
@@ -12,12 +12,12 @@
         _Rim ("Foam Line Width", Range(0,0.1)) = 0.0    
         _RimColor ("Rim Color", Color) = (1,1,1,1)
         _RimPower ("Rim Power", Range(0,10)) = 0.0
+        _Height ("Height", Range(-10, 10)) = 1.0
     }
  
     SubShader
     {
-        Tags {"Queue"="Geometry"  "DisableBatching" = "True" "RenderType" = "Transparent" "Queue" = "Transparent"}
-        Blend SrcAlpha OneMinusSrcAlpha
+        Tags {"Queue"="Geometry"  "DisableBatching" = "True" "Queue" = "Transparent"}
 
         Pass
         {
@@ -57,6 +57,8 @@
          float _FillAmount, _WobbleX, _WobbleZ;
          float4 _TopColor, _RimColor, _FoamColor, _Tint;
          float _Rim, _RimPower;
+         float _Height;
+        
            
          float4 RotateAroundYInDegrees (float4 vertex, float degrees)
          {
@@ -71,7 +73,6 @@
          v2f vert (appdata v)
          {
             v2f o;
- 
             o.vertex = UnityObjectToClipPos(v.vertex);
             o.uv = TRANSFORM_TEX(v.uv, _MainTex);
             UNITY_TRANSFER_FOG(o,o.vertex);        
@@ -84,9 +85,8 @@
             // combine rotations with worldPos, based on sine wave from script
             float3 worldPosAdjusted = worldPos + (worldPosX  * _WobbleX)+ (worldPosZ* _WobbleZ);
             // how high up the liquid is
-            o.fillEdge =  worldPosAdjusted.y + 1- _FillAmount;
- 
-            o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
+            o.fillEdge = (worldPosAdjusted.y/(_Height * 2)) + (1 - _FillAmount + 0.05);
+            o.viewDir = normalize(ObjSpaceViewDir(v.vertex));
             o.normal = v.normal;
             return o;
          }
@@ -116,7 +116,7 @@
            // color of backfaces/ top
            float4 topColor = _TopColor * (foam + result);
            //VFACE returns positive for front facing, negative for backfacing
-           return facing > 0 ? topColor : finalResult;
+           return facing > 0 ? finalResult : topColor;
                
          }
          ENDCG

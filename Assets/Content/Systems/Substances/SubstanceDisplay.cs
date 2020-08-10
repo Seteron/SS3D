@@ -32,6 +32,8 @@ namespace SS3D.Content.Systems.Substances
         Vector3 velocity;
         Vector3 lastRot;
         Vector3 angularVelocity;
+        public float MinFill = 0.01f;
+        public float MaxFill = 0.99f;
         public float MaxWobble = 0.03f;
         public float WobbleSpeed = 1f;
         public float Recovery = 1f;
@@ -41,10 +43,12 @@ namespace SS3D.Content.Systems.Substances
         float wobbleAmountToAddZ;
         float pulse;
         float time = 0.5f;
+        float fillAmount = 0;
 
         private void Start()
         {
             meshRenderer = DisplayObject.GetComponent<MeshRenderer>();
+            fillAmount = 0;
             if (isServer)
             {
                 Container.ContentsChanged += container => UpdateDisplay();
@@ -67,6 +71,16 @@ namespace SS3D.Content.Systems.Substances
             // send it to the shader
             meshRenderer.material.SetFloat("_WobbleX", wobbleAmountX);
             meshRenderer.material.SetFloat("_WobbleZ", wobbleAmountZ);
+            Mesh mesh = DisplayObject.GetComponent<MeshFilter>().mesh;
+            meshRenderer.material.SetFloat("_Height", meshRenderer.bounds.extents.y);
+            float relativeVolume = (Container.CurrentVolume / Container.Volume);
+            if(fillAmount != relativeVolume)
+            {
+                fillAmount = Mathf.Lerp(fillAmount, relativeVolume, Time.deltaTime * 1.5f);
+                if(fillAmount < 0||float.IsNaN(fillAmount)) fillAmount = 0f;
+                float clampedFill = fillAmount * (MaxFill - MinFill) + MinFill;
+                meshRenderer.material.SetFloat("_FillAmount", fillAmount);
+            }
 
             // velocity
             velocity = (lastPos - transform.position) / Time.deltaTime;
@@ -85,14 +99,14 @@ namespace SS3D.Content.Systems.Substances
         [Server]
         private void UpdateDisplay()
         {
-            float relativeVolume = (Container.CurrentVolume / Container.Volume);
             Transform trans = DisplayObject.transform;
-
             Color newColor = CalculateColor();
-
-            meshRenderer.material.SetFloat("_FillAmount", relativeVolume);
+            Color.RGBToHSV(newColor , out var h, out var s, out var v);
+            Color newColorTop = Color.HSVToRGB(h, s * 0.35f, v);
+            Color newColorFoam = Color.HSVToRGB(h, s * 0.55f, v);
             meshRenderer.material.SetColor("_Tint", newColor);
-            meshRenderer.material.SetColor("_TopColor", newColor);
+            meshRenderer.material.SetColor("_TopColor", newColorTop);
+            meshRenderer.material.SetColor("_FoamColor", newColorFoam);
 
             //trans.localPosition = Vector3.Lerp(EmptyPosition, FullPosition, Mathf.Min(relativeVolume, 1));
             //trans.localScale = new Vector3(ScaleX.Evaluate(relativeVolume), ScaleY.Evaluate(relativeVolume), ScaleZ.Evaluate(relativeVolume));
@@ -109,7 +123,7 @@ namespace SS3D.Content.Systems.Substances
                 color += entry.Substance.Color * relativeMoles;
             }
 
-            color.a = 0.5f;
+            color.a = 1f;
             return color;
         }
 
