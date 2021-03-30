@@ -4,6 +4,7 @@ using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace SS3D.Engine.Server.Round
 {
@@ -14,89 +15,221 @@ namespace SS3D.Engine.Server.Round
     /// </summary>
     public class RoundManager : NetworkBehaviour
     {
+        public static RoundManager singleton { get; private set; }
+
+        private bool warmingUp;
         [SerializeField] private int warmupTimeSeconds = 5;
         [SerializeField] private int roundTimeSeconds = 300;
-        [SerializeField] private TextMeshProUGUI timerText = null;
-        [SerializeField] private RectTransform timerUi = null;
-        [SerializeField] private RectTransform controlUi = null;
-
+        private Coroutine warmupCoroutine;     
+        
         private int timerSeconds = 0;
         private bool started = false;
         private Coroutine tickCoroutine;
-            
+
+        public static event System.Action ServerWarmupStarted;
+        public static event System.Action ServerRoundStarted;
+        public static event System.Action ServerRoundRestarted;
+        public static event System.Action<int> ClientTimerUpdated;
+
+        public static event System.Action ServerRoundEnded; 
+
         public bool IsRoundStarted => started;
+        public bool IsOnWarmup => warmingUp;
 
-        public void StartWarmup()
+        private void Awake()
         {
-            timerSeconds = warmupTimeSeconds;
-            gameObject.SetActive(true);
-            StartCoroutine(TickWarmup());
-        }
-
-        public void StartRound()
-        {
-            started = true;
-            controlUi.gameObject.SetActive(true);
-            gameObject.SetActive(true);
-            tickCoroutine = StartCoroutine(Tick());
+            InitializeSingleton();
         }
         
+        public void StartWarmup()
+        {
+            gameObject.SetActive(true);
+
+            started = false;
+            StopAllCoroutines();
+            
+            timerSeconds = warmupTimeSeconds;
+
+            warmupCoroutine = StartCoroutine(TickWarmup());
+
+            warmingUp = true;
+            ServerWarmupStarted?.Invoke();
+            RpcStartWarmup();
+        }
+
+        [ClientRpc]
+        private void RpcStartWarmup()
+        {
+            if (isServer) return;
+            gameObject.SetActive(true);
+
+            started = false;
+            StopAllCoroutines();
+            
+            timerSeconds = warmupTimeSeconds;
+
+            warmupCoroutine = StartCoroutine(TickWarmup());
+
+            warmingUp = true;
+            ServerWarmupStarted?.Invoke();
+        }
+
+        [ContextMenu("Start Round")]
+        public void StartRound()
+        {
+            gameObject.SetActive(true);
+            started = true;
+            warmingUp = false;
+            
+            StopCoroutine(warmupCoroutine);
+            
+            tickCoroutine = StartCoroutine("Tick");
+
+            Debug.Log("Round Started");
+            ServerRoundStarted?.Invoke();
+            RpcStartRound();
+        }
+
+        [ClientRpc]
+        public void RpcStartRound()
+        {
+            if (isServer) return;
+            
+            gameObject.SetActive(true);
+            started = true;
+            warmingUp = false;
+            
+            if (warmupCoroutine != null) StopCoroutine(warmupCoroutine); 
+            
+            tickCoroutine = StartCoroutine("Tick");
+            
+            Debug.Log("Round Started");
+            ServerRoundStarted?.Invoke();
+        }
+
+        public void EndRound()
+        {
+            if (!isServer) return;
+
+            // if the round didn't even start we cancel the warmup
+            if (warmingUp)
+            {
+                warmingUp = false;
+                StopCoroutine(warmupCoroutine);
+            }
+
+            started = false;
+            ServerRoundEnded?.Invoke();
+
+            CameraManager.singleton.playerCamera.gameObject.SetActive(false);
+            CameraManager.singleton.lobbyCamera.gameObject.SetActive(true);
+            
+            StopCoroutine(tickCoroutine);
+            SceneLoaderManager.singleton.UnloadSelectedMap();
+
+            RpcEndRound();
+        }
+
+        [ClientRpc]
+        public void RpcEndRound()
+        {
+            if (isServer) return;
+            // if the round didn't even start we cancel the warmup
+            if (warmingUp)
+            {
+                warmingUp = false;
+                StopCoroutine(warmupCoroutine);
+            }
+
+            started = false;
+            ServerRoundEnded?.Invoke();
+
+            CameraManager.singleton.playerCamera.gameObject.SetActive(false);
+            CameraManager.singleton.lobbyCamera.gameObject.SetActive(true);
+
+            StopCoroutine(tickCoroutine);
+            SceneLoaderManager.singleton.UnloadSelectedMap();
+
+            StopCoroutine(tickCoroutine);
+        }
+        
+        // Ignore this for now
         public void RestartRound()
         {
             if (!isServer)
             {
                 return;
             }
+
+            if (started) EndRound();
             
-            StopCoroutine(tickCoroutine);
-            NetworkManager.singleton.ServerChangeScene(SceneManager.GetActiveScene().name);
+            ServerRoundRestarted?.Invoke();
         }
-        
+
         private IEnumerator TickWarmup()
         {
             while (timerSeconds > 0)
             {
-                RpcUpdateClientClocks(GetTimerText());
+                UpdateClock(GetTimerTextSeconds());
+                Debug.Log("Round start timer:" + timerSeconds);
                 timerSeconds--;
                 yield return new WaitForSeconds(1);
             }
-            
+
             StartRound();
         }
-        
+
         private IEnumerator Tick()
         {
-            while (timerSeconds < roundTimeSeconds)
+            while (started)
             {
-                RpcUpdateClientClocks(GetTimerText());
+                UpdateClock(GetTimerTextSeconds());
                 timerSeconds++;
                 yield return new WaitForSeconds(1);
             }
-            
-            RestartRound();
+            Debug.Log("Coroutine running while round is not started, IsRoundStarted: " + started);
+            //RestartRound();
+        }
+
+        [Server]
+        private void UpdateClock(int time)
+        {
+            ClientTimerUpdated?.Invoke(time);
+            RpcUpdateClientClocks(time);
         }
 
         [ClientRpc]
-        private void RpcUpdateClientClocks(string text)
+        private void RpcUpdateClientClocks(int time)
         {
-            if (!timerUi.gameObject.activeSelf)
-            {
-                timerUi.gameObject.SetActive(true);
-            }
-
-            timerText.text = text;
+            ClientTimerUpdated?.Invoke(time);
         }
-
-        private string GetTimerText()
+        
+        private int GetTimerTextSeconds()
         {
             TimeSpan timeSpan = TimeSpan.FromSeconds(timerSeconds);
-            string timer =  timeSpan.ToString(@"hh\:mm\:ss");
-            return IsRoundStarted ? $"Round Time: {timer}" : $"Round Start In: {timer}";
+            int timer = (int)timeSpan.TotalSeconds;
+            return timer;
         }
 
+        public void SetWarmupTime(TMP_InputField newTime)
+        {
+            if (newTime.text == null) return;
+            warmupTimeSeconds = Int32.Parse(newTime.text);
+        } 
         public void SetWarmupTime(int newTime)
         {
             warmupTimeSeconds = newTime;
+        }
+
+        void InitializeSingleton()
+        {
+            if (singleton != null && singleton != this) { 
+                Destroy(gameObject);
+            }
+            else
+            {
+                singleton = this;   
+            }
         }
     }
 }

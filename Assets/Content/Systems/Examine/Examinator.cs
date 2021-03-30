@@ -16,12 +16,16 @@ namespace SS3D.Content.Systems.Examine
         public LayerMask ObstacleMask;
         public float ViewRange = 25f;
 
+        private Camera camera;
+        
         private GameObject uiInstance;
         private ExamineUI examineUi;
         private Vector2 lastMousePosition;
         private Vector3 lastCameraPosition;
         private Quaternion lastCameraRotation;
+		public CompositeItemSelector selector;
         private GameObject currentTarget;
+		private bool currentTargetIsComposite;
 
         private void Start()
         {
@@ -31,11 +35,16 @@ namespace SS3D.Content.Systems.Examine
                 Destroy(this);
             }
 
-            Assert.IsNotNull(UiPrefab);
+            camera = CameraManager.singleton.examineCamera;
+            selector = camera.GetComponent<CompositeItemSelector>();
+	        
+	        Assert.IsNotNull(UiPrefab);
             uiInstance = Instantiate(UiPrefab);
             examineUi = uiInstance.GetComponent<ExamineUI>();
             Assert.IsNotNull(examineUi);
             uiInstance.SetActive(false);
+            
+			//selector = Camera.main.transform.GetChild(0).GetComponent<CompositeItemSelector>();
         }
 
         private void Update()
@@ -49,7 +58,6 @@ namespace SS3D.Content.Systems.Examine
             {
                 Vector3 mousePosition = Input.mousePosition;
                 Vector2 position = new Vector2(mousePosition.x, mousePosition.y);
-                Camera camera = Camera.main;
                 Vector3 cameraPos = camera.transform.position;
                 Quaternion rotation = camera.transform.rotation;
 
@@ -69,12 +77,16 @@ namespace SS3D.Content.Systems.Examine
             {
                 lastMousePosition = Vector2.negativeInfinity;
                 ClearExamine();
+                if (selector == null)
+                {
+	                selector = camera.GetComponent<CompositeItemSelector>();
+                }
+                selector.DisableCamera();
             }
         }
 
         private void CalculateExamine()
         {
-            Camera camera = Camera.main;
             if (camera == null)
             {
                 return;
@@ -89,41 +101,79 @@ namespace SS3D.Content.Systems.Examine
                 IExaminable[] examinables = hitObject.GetComponents<IExaminable>();
                 if (examinables.Length > 0)
                 {
-                    // Do nothing if ray hit current object
-                    if (currentTarget == hitObject)
+                    // Do nothing if ray hit current object (and that object is not composed of multiple Examinables)
+                    if (currentTarget == hitObject && !currentTargetIsComposite)
                     {
                         return;
                     }
+					
+					// Check view distance
+					if (Vector2.Distance(new Vector2(hit.point.x, hit.point.z),
+							new Vector2(transform.position.x, transform.position.z)) > ViewRange)
+					{
+						ClearExamine();
+						return;
+					}
 
-                    // Check view distance
-                    if (Vector2.Distance(new Vector2(hit.point.x, hit.point.z),
-                            new Vector2(transform.position.x, transform.position.z)) > ViewRange)
-                    {
-                        ClearExamine();
-                        return;
-                    }
-
-                    // Check obstacles
-                    if (Physics.Linecast(transform.position, hit.point, ObstacleMask))
-                    {
-                        ClearExamine();
-                        return;
-                    }
-
+					// Check obstacles
+					if (Physics.Linecast(transform.position, hit.point, ObstacleMask))
+					{
+						ClearExamine();
+						return;
+					}
 
                     currentTarget = hitObject;
+					currentTargetIsComposite = selector.IsCompositeExaminable(hitObject);
+
+					if (currentTargetIsComposite)
+					{
+						// Need to get ALL possible hits, because the initial hit may have gaps through which we can see other Examinables
+						RaycastHit[] hits = Physics.RaycastAll(ray, 200f);
+						// Convert the RaycastHits to GameObjects
+						GameObject[] gameObjects = new GameObject[hits.Length];
+						for (int i = 0; i < hits.Length; i++)
+						{
+							gameObjects[i] = hits[i].transform.gameObject;
+						}
+						selector.AddMeshesToLists(gameObjects);
+						hitObject = selector.GetCurrentExaminable();
+						
+						// HitObject will always be null on the first frame - the render hasn't occurred yet
+						if (hitObject == null)
+						{
+							return;
+						}
+						else
+						{
+							examinables = hitObject.GetComponents<IExaminable>();
+						}
+					}
 
                     // Check if object is networked synced
                     NetworkIdentity identity = hitObject.GetComponent<NetworkIdentity>();
                     if (identity == null)
                     {
-                        // Client examine
+                        // Examine non-networked items
                         UpdateExamine(examinables);
                     }
                     else
                     {
-                        // Server examine
-                        CmdRequestExamine(identity);
+						if (identity.netId == 0){
+							
+							// Treat this as a non-networked item. A bit hacky. Seems to affect turfs / fixtures created by clients...
+							 UpdateExamine(examinables);
+							 
+						} else {
+							
+							// Network examine
+							if (!isServer){
+								// Clients must request the Rpc through a Command to the Server
+								CmdRequestExamine(identity);
+							} else {
+								// The Server can perform the Rpc directly.
+								TargetExamine(identity);
+							}
+						}
                     }
 
                     return;
@@ -133,9 +183,18 @@ namespace SS3D.Content.Systems.Examine
             ClearExamine();
         }
 
+
         [Command]
         private void CmdRequestExamine(NetworkIdentity target)
         {
+			TargetExamine(target);
+		}
+		
+		
+		[TargetRpc]
+		private void TargetExamine(NetworkIdentity target)
+		{
+
             IExaminable[] examinables = target.GetComponents<IExaminable>();
             if (examinables.Length < 1)
             {
@@ -155,20 +214,14 @@ namespace SS3D.Content.Systems.Examine
             {
                 return;
             }
-
+			
             string hoverText = GetHoverText(examinables);
             if (hoverText != null)
             {
-                TargetExamine(hoverText);
-            }
-        }
-
-        [TargetRpc]
-        private void TargetExamine(string text)
-        {
-            examineUi.SetText(text);
-            uiInstance.SetActive(true);
-        }
+                examineUi.SetText(hoverText);
+				uiInstance.SetActive(true);
+            }			
+		}
 
         private void UpdateExamine(IExaminable[] examinables)
         {

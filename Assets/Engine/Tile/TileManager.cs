@@ -15,6 +15,7 @@ namespace SS3D.Engine.Tiles {
     [ExecuteAlways]
     public class TileManager : NetworkBehaviour
     {
+        public static TileManager singleton { get; private set; }
         /// <summary>
         /// How many tiles are serialized per rpc
         /// </summary>
@@ -25,7 +26,13 @@ namespace SS3D.Engine.Tiles {
             public Vector2Int position;
             public TileDefinition definition;
         }
+        
+        public static event System.Action tileManagerLoaded;
 
+        public bool IsEnabled()
+        {
+            return gameObject.activeSelf;
+        }
         public static bool IsOnServer(GameObject tileChild)
         {
             return tileChild.transform.root.GetComponent<NetworkIdentity>().isServer;
@@ -182,6 +189,29 @@ namespace SS3D.Engine.Tiles {
         }
 
         public override void OnStartServer() => ReinitializeFromChildren();
+
+        private void OnEnable()
+        {
+            LoadTileMap();
+        }
+
+        private void Awake()
+        {
+            if (singleton != null && singleton != this)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                singleton = this;
+            }
+        }
+
+
+        private void LoadTileMap()
+        {
+            tileManagerLoaded?.Invoke();
+        }
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -464,6 +494,33 @@ namespace SS3D.Engine.Tiles {
             return tiles.Values.ToList<TileObject>();
         }
 
+        public TileObject[] GetAdjacentTileObjects(TileObject tileObject)
+        {
+            TileObject[] adjacents = new TileObject[8];
+            var index = GetIndexAt(tileObject.transform.position);
+
+            for (Direction direction = Direction.North; direction <= Direction.NorthWest; direction += 1)
+            {
+                // Take the cardinal direction, but use it in negative, so direction means the direction from OTHER to the just updated tile.
+                var modifier = DirectionHelper.ToCardinalVector(direction);
+
+                if (index.y + modifier.Item2 < 0 || index.x + modifier.Item1 < 0)
+                    continue;
+
+                ulong otherKey = GetKey(index.x + modifier.Item1, index.y + modifier.Item2);
+                if (tiles.ContainsKey(otherKey))
+                {
+                    adjacents[(int)direction] = tiles[otherKey];
+                }
+                else
+                {
+                    adjacents[(int)direction] = null;
+                }
+            }
+
+            return adjacents;
+        }
+
         // TODO: This is an inefficient data structure for our purposes.
         // TODO: Allow negatives
         // The key is the concatenated y,x position of the tile.
@@ -500,6 +557,8 @@ namespace SS3D.Engine.Tiles {
                 {
                     writer.WriteString("");
                 }
+
+                
             }
 
             // Write all wall fixtures
@@ -628,6 +687,8 @@ namespace SS3D.Engine.Tiles {
             // TODO: Should substates be initialized to null array?
             return tileDefinition;
         }
+
+        
 
         // Store a list of all turfs and fixtures to be used in networking communications.
         // This might not be the final place of these resources (could be a public singleton), given that these could be
