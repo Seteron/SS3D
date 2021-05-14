@@ -124,6 +124,14 @@ namespace SS3D.Engine.Inventory.Extensions
             {
                 CmdDropHeldItem();
             }
+
+            if (Input.GetButtonUp("Throw")) 
+            {
+                Physics.Raycast(CameraManager.singleton.playerCamera.ScreenPointToRay(Input.mousePosition), out var hit);
+
+                if(GameObject.Find("Intent").GetComponent<IntentManager>().selectedIntent == IntentManager.IntentType.Harm) CmdThrowOver(hit.point);
+                else CmdThrowUnder(hit.point);
+            }
         }
 
         [Command]
@@ -142,6 +150,91 @@ namespace SS3D.Engine.Inventory.Extensions
             else
             {
                 Debug.Log($"Invalid hand index {selectedHand}");   
+            }
+        }
+
+        [Command]
+        private void CmdThrowUnder(Vector3 mousePos)
+        {
+            ThrowUnder(mousePos);
+        }
+        [Command]
+        private void CmdThrowOver(Vector3 mousePos)
+        {
+            ThrowOver(mousePos);
+        }
+
+        [Server]
+        public void ThrowUnder(Vector3 mousePos)
+        {
+            if (ItemInHand == null) return;
+            GameObject itemObject = ItemInHand.gameObject;
+            DropHeldItem();
+
+            float maxRange = 3f;
+            Vector3 targetVector = mousePos - itemObject.transform.position;
+            targetVector = Vector3.ClampMagnitude(targetVector, maxRange);
+
+            Vector3 launchVector = CannonAngle(targetVector) * itemObject.GetComponent<Rigidbody>().mass;
+
+            float distance = targetVector.magnitude;
+            Vector3 torque = new Vector3(distance, distance, distance);
+
+            Launch(itemObject, launchVector, torque);
+        }
+
+        public Vector3 CannonAngle(Vector3 dir)
+        {    
+            float height = dir.y; // get height difference
+            dir.y = 0; // retain only the horizontal difference
+            float dist = dir.magnitude; // get horizontal direction
+            float a = 45 * Mathf.Deg2Rad; // Convert angle to radians
+            dir.y = dist * Mathf.Tan(a); // set dir to the elevation angle.
+            dist += height / Mathf.Tan(a); // Correction for small height differences
+
+            // Calculate the velocity magnitude
+            float velocity = Mathf.Sqrt(dist * Physics.gravity.magnitude / Mathf.Sin(2 * a));
+            return velocity * dir.normalized; // Return a normalized vector.
+        }
+
+        [Server]
+        public void ThrowOver(Vector3 mousePos)
+        {
+            if (ItemInHand == null) return;
+            GameObject itemObject = ItemInHand.gameObject;
+            DropHeldItem();
+    
+            Vector3 aimVector = mousePos - transform.root.position;
+            aimVector.y = 0f;
+
+            float forwardForce = 15;
+            float upwardForce = 3;
+            Vector3 launchVector = (aimVector.normalized * forwardForce + Vector3.up * upwardForce) * itemObject.GetComponent<Rigidbody>().mass;
+
+            itemObject.transform.rotation = Quaternion.FromToRotation(Vector3.forward, aimVector.normalized);
+            Vector3 torque = Quaternion.FromToRotation(Vector3.forward, aimVector.normalized) * Vector3.right * 10;
+
+            Launch(itemObject, launchVector, torque);
+        }
+
+        private void Launch(GameObject itemObject, Vector3 launchVector, Vector3 torqueVector)
+        {
+            Rigidbody rb = itemObject.GetComponent<Rigidbody>();
+            rb.AddForce(launchVector, ForceMode.Impulse);
+            rb.maxAngularVelocity = 15;
+            if(torqueVector != Vector3.zero) rb.angularVelocity = torqueVector;
+
+            if(isServer)
+            {
+                RpcLaunch(itemObject, launchVector, torqueVector);
+            }
+        }
+        [ClientRpc]
+        private void RpcLaunch(GameObject itemObject, Vector3 launchVector, Vector3 torqueVector)
+        {
+            if(!isServer)
+            {
+                Launch(itemObject, launchVector, torqueVector);
             }
         }
 

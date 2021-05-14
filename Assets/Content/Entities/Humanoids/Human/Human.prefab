@@ -91,7 +91,7 @@ GameObject:
   - component: {fileID: -8569418428762442770}
   - component: {fileID: 280135170638016455}
   - component: {fileID: 7985328355681489701}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Human
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1690,6 +1690,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84c1d3aa47bd44d4780f6026f6973d57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camera: {fileID: 0}
   target: {fileID: 4674694871559829712}
   currentRot: {x: 0, y: 0, z: 0, w: 0}
   minRotationLimit: -50
@@ -2144,6 +2145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HideItems: 0
   AttachItems: 1
+  AttachmentOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &6039916320214537935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4035,6 +4037,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HideItems: 0
   AttachItems: 1
+  AttachmentOffset: {x: 0, y: 0, z: 0}
 --- !u!114 &3651239659719903665
 MonoBehaviour:
   m_ObjectHideFlags: 0
