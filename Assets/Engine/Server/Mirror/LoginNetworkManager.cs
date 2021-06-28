@@ -46,7 +46,7 @@ using UnityEngine.SceneManagement;
         /**
          * Information about the login server sent to the client.
          */
-        public class LoginServerMessage : MessageBase
+        public struct LoginServerMessage : NetworkMessage
         {
             // If null, then no 
             public string serverAddress;
@@ -55,7 +55,7 @@ using UnityEngine.SceneManagement;
         /**
          * Information about the player's chosen character sent from client to server
          */
-        public class CharacterSelectMessage : MessageBase
+        public struct CharacterSelectMessage : NetworkMessage
         {
             public CharacterResponse character;
         }
@@ -109,19 +109,19 @@ using UnityEngine.SceneManagement;
             {
                 if (singleton != null)
                 {
-                    logger.LogWarning("Multiple NetworkManagers detected in the scene. Only one NetworkManager can exist at a time. The duplicate NetworkManager will be destroyed.");
+                    //logger.LogWarning("Multiple NetworkManagers detected in the scene. Only one NetworkManager can exist at a time. The duplicate NetworkManager will be destroyed.");
                     Destroy(gameObject);
 
                     // Return false to not allow collision-destroyed second instance to continue.
                     return false;
                 }
-                logger.Log("NetworkManager created singleton (DontDestroyOnLoad)");
+                //logger.Log("NetworkManager created singleton (DontDestroyOnLoad)");
                 singleton = this;
                 if (Application.isPlaying) DontDestroyOnLoad(gameObject);
             }
             else
             {
-                logger.Log("NetworkManager created singleton (ForScene)");
+                //logger.Log("NetworkManager created singleton (ForScene)");
                 singleton = this;
             }
 
@@ -225,7 +225,8 @@ using UnityEngine.SceneManagement;
                 Debug.LogWarning("The Login system does not support having a separate Online Scene yet!");
                 return;
             }
-            ClientScene.AddPlayer(conn);
+            if(!NetworkClient.ready) NetworkClient.Ready();
+            NetworkClient.AddPlayer();
         }
 
         /**
@@ -329,7 +330,7 @@ using UnityEngine.SceneManagement;
             yield return new WaitUntil(() => roundManager.IsRoundStarted);
 
             //Something has gone horribly wrong
-            if (characterSelection?.character == null) throw new Exception("Could not read character data");
+            if (characterSelection.character == null) throw new Exception("Could not read character data");
 
             // Spawn player based on their character choices
             Transform startPos = GetStartPosition();
