@@ -120,7 +120,9 @@ namespace Mirror.RemoteCalls
         {
             if (GetInvokerForHash(cmdHash, invokeType, out Invoker invoker) && invoker.invokeClass.IsInstanceOfType(invokingType))
             {
+                NetworkBehaviour.currentSender = senderConnection;
                 invoker.invokeFunction(invokingType, reader, senderConnection);
+                NetworkBehaviour.currentSender = null;
                 return true;
             }
             return false;

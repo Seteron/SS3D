@@ -105,6 +105,8 @@ namespace Telepathy
         //    old dieing threads still using the previous object!
         ClientConnectionState state;
 
+        public static event System.Action connectionFailed;
+
         // Connected & Connecting
         public bool Connected => state != null && state.Connected;
         public bool Connecting => state != null && state.Connecting;
@@ -158,6 +160,8 @@ namespace Telepathy
                 // add 'Disconnected' event to receive pipe so that the caller
                 // knows that the Connect failed. otherwise they will never know
                 state.receivePipe.Enqueue(0, EventType.Disconnected, default);
+
+                connectionFailed?.Invoke();
             }
             catch (ThreadInterruptedException)
             {

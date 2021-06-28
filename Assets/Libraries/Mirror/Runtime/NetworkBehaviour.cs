@@ -57,6 +57,14 @@ namespace Mirror
         /// <summary>Server's network connection to the client. This is only valid for player objects on the server.</summary>
         public NetworkConnection connectionToClient => netIdentity.connectionToClient;
 
+        
+        /// <summary>
+        /// The sender of the current network function
+        /// </summary>
+        public static NetworkConnection currentSender = null;
+
+
+
         protected ulong syncVarDirtyBits { get; private set; }
         ulong syncVarHookGuard;
 
