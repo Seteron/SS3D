@@ -128,7 +128,7 @@ namespace SS3D.Engine.Inventory.Extensions
             {
                 Physics.Raycast(CameraManager.singleton.playerCamera.ScreenPointToRay(Input.mousePosition), out var hit);
 
-                if(GameObject.Find("Intent").GetComponent<IntentManager>().selectedIntent == IntentManager.IntentType.Harm) CmdThrowOver(hit.point);
+                if(GameObject.Find("IntentButton").GetComponent<IntentManager>().selectedIntent == IntentManager.IntentType.Harm) CmdThrowOver(hit.point);
                 else CmdThrowUnder(hit.point);
             }
         }
