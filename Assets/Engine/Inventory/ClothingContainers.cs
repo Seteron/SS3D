@@ -28,11 +28,15 @@ namespace SS3D.Engine.Inventory
         public void Start()
         {
             ContainerDescriptor[] descriptors = gameObject.GetComponents<ContainerDescriptor>();
-            foreach(ContainerDescriptor descriptor in descriptors)
+            ClothingDisplay clothingDisplay = gameObject.GetComponent<ClothingDisplay>();
+
+            foreach (ContainerDescriptor descriptor in descriptors)
             {
-                if(ClothingSlotNames.IndexOf(descriptor.containerName) != -1)
+                if (ClothingSlotNames.IndexOf(descriptor.containerName) != -1)
                 {
                     Containers.Add(descriptor.containerName, descriptor.attachedContainer);
+                    descriptor.attachedContainer.ItemAttached += clothingDisplay.OnClothingAttached;
+                    descriptor.attachedContainer.ItemDetached += clothingDisplay.OnClothingDetached;
                 }
             }
         }
