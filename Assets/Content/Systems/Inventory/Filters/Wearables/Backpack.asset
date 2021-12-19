@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48bc3e6256e003f49b038fe30c1d9be6, type: 3}
   m_Name: Backpack
   m_EditorClassIdentifier: 
-  bulkSize: 2
   mustHaveAll: 0
-  acceptedTraits: []
+  acceptedTraits:
+  - {fileID: 11400000, guid: 356f6292fd149764fb539e603d2c6e20, type: 2}
   deniedTraits: []
   hash: -905570011

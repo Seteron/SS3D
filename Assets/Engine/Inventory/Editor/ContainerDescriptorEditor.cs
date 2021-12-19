@@ -29,7 +29,6 @@ public class ContainerDescriptorEditor : Editor
         AddBase();
 
         attachedContainer = containerDescriptor.attachedContainer;
-        attachedContainer.hideFlags = HideFlags.HideInInspector;
         containerInteractive = containerDescriptor.containerInteractive;
         containerItemDisplay = containerDescriptor.containerItemDisplay;
     }
@@ -338,6 +337,7 @@ public class ContainerDescriptorEditor : Editor
     {
         containerDescriptor.attachedContainer = containerDescriptor.gameObject.AddComponent<AttachedContainer>();
         containerDescriptor.attachedContainer.containerDescriptor = containerDescriptor;
+        containerDescriptor.attachedContainer.hideFlags = HideFlags.HideInInspector;
     }
 
     private void AddSync()
