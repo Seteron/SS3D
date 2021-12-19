@@ -102,7 +102,17 @@ namespace SS3D.Engine.Inventory
         public void Awake()
         {
             // create a new container of Size size
-            Assert.IsNotNull(attachedContainer);
+            if(attachedContainer == null)
+            {
+                attachedContainer = gameObject.AddComponent<AttachedContainer>();
+                attachedContainer.hideFlags = HideFlags.HideInInspector;
+                attachedContainer.containerDescriptor = this;
+            }
+            if(containerSync == null)
+            {
+                containerSync = gameObject.GetComponent<ContainerSync>();
+            }
+
             attachedContainer.Container = new Container
             {
                 Size = size

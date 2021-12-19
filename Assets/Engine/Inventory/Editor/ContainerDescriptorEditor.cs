@@ -29,6 +29,7 @@ public class ContainerDescriptorEditor : Editor
         AddBase();
 
         attachedContainer = containerDescriptor.attachedContainer;
+        attachedContainer.hideFlags = HideFlags.HideInInspector;
         containerInteractive = containerDescriptor.containerInteractive;
         containerItemDisplay = containerDescriptor.containerItemDisplay;
     }

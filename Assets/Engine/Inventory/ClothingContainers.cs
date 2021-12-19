@@ -19,23 +19,21 @@ namespace SS3D.Engine.Inventory
         public AttachedContainer SuitStorage => Containers["Suit Storage"];
 
         [NonSerialized]
-        public static readonly string[] ClothingSlotNames = {"Ears", "Jumpsuit", "Exosuit", "Glasses", "Mask", "Gloves", "Head", "Shoes", "Accessory", "Suit Storage"};
+        public static readonly List<string> ClothingSlotNames = new List<string> 
+        {"Ears", "Jumpsuit", "Exosuit", "Glasses", "Mask", "Gloves", "Head", "Shoes", "Accessory", "Suit Storage"};
 
         [NonSerialized]
         public Dictionary<string, AttachedContainer> Containers = new Dictionary<string, AttachedContainer>();
 
-        public void Awake()
+        public void Start()
         {
-            Filter[] filters = new Filter[1];
-            foreach (string slotName in ClothingSlotNames)
+            ContainerDescriptor[] descriptors = gameObject.GetComponents<ContainerDescriptor>();
+            foreach(ContainerDescriptor descriptor in descriptors)
             {
-                var trait = ScriptableObject.CreateInstance<Trait>();
-                trait.Hash = Animator.StringToHash($"Clothing{slotName}".ToUpper());
-                var filter = ScriptableObject.CreateInstance<Filter>();
-                filter.acceptedTraits = new List<Trait> {trait};
-                filter.deniedTraits = new List<Trait>();
-                filters[0] = filter;
-                Containers.Add(slotName, AttachedContainer.CreateEmpty(gameObject, Vector2Int.one, filters));
+                if(ClothingSlotNames.IndexOf(descriptor.containerName) != -1)
+                {
+                    Containers.Add(descriptor.containerName, descriptor.attachedContainer);
+                }
             }
         }
     }

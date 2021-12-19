@@ -90,6 +90,14 @@ GameObject:
   - component: {fileID: -8569418428762442770}
   - component: {fileID: 280135170638016455}
   - component: {fileID: 7985328355681489701}
+  - component: {fileID: 4200483438314790519}
+  - component: {fileID: 2352404911334569011}
+  - component: {fileID: 4736077408999381673}
+  - component: {fileID: 241491659311351190}
+  - component: {fileID: 8585070778684865660}
+  - component: {fileID: 8869517439305655391}
+  - component: {fileID: 2260875416458480314}
+  - component: {fileID: 2515298200380975804}
   m_Layer: 0
   m_Name: Human
   m_TagString: Untagged
@@ -566,6 +574,310 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d4b90a59a774591b9e883c310c3935a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4200483438314790519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289348138277843802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25696236470760b41b375e9b6939444c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachedContainer: {fileID: 0}
+  containerSync: {fileID: 0}
+  containerInteractive: {fileID: 0}
+  containerItemDisplay: {fileID: 0}
+  containerUi: {fileID: 0}
+  openIcon: {fileID: 0}
+  takeIcon: {fileID: 0}
+  storeIcon: {fileID: 0}
+  viewIcon: {fileID: 0}
+  attachmentOffset: {x: 0, y: 0, z: 0}
+  containerName: Ears
+  onlyStoreWhenOpen: 0
+  openWhenContainerViewed: 0
+  size: {x: 1, y: 1}
+  hideItems: 1
+  attachItems: 1
+  startFilter: {fileID: 11400000, guid: abb8943a366bbfe4d9d25a6f6714e219, type: 2}
+  initialized: 1
+  maxDistance: 5
+  isOpenable: 0
+  isInteractive: 0
+  hasUi: 0
+  hasCustomInteraction: 0
+  hasCustomDisplay: 0
+  displays: []
+  numberDisplay: 0
+--- !u!114 &2352404911334569011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289348138277843802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25696236470760b41b375e9b6939444c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachedContainer: {fileID: 0}
+  containerSync: {fileID: 0}
+  containerInteractive: {fileID: 0}
+  containerItemDisplay: {fileID: 0}
+  containerUi: {fileID: 0}
+  openIcon: {fileID: 0}
+  takeIcon: {fileID: 0}
+  storeIcon: {fileID: 0}
+  viewIcon: {fileID: 0}
+  attachmentOffset: {x: 0, y: 0, z: 0}
+  containerName: Jumpsuit
+  onlyStoreWhenOpen: 0
+  openWhenContainerViewed: 0
+  size: {x: 1, y: 1}
+  hideItems: 1
+  attachItems: 1
+  startFilter: {fileID: 11400000, guid: cacef9e34560cb341bf02fcd164549c7, type: 2}
+  initialized: 1
+  maxDistance: 5
+  isOpenable: 0
+  isInteractive: 0
+  hasUi: 0
+  hasCustomInteraction: 0
+  hasCustomDisplay: 0
+  displays: []
+  numberDisplay: 0
+--- !u!114 &4736077408999381673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289348138277843802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25696236470760b41b375e9b6939444c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachedContainer: {fileID: 0}
+  containerSync: {fileID: 0}
+  containerInteractive: {fileID: 0}
+  containerItemDisplay: {fileID: 0}
+  containerUi: {fileID: 0}
+  openIcon: {fileID: 0}
+  takeIcon: {fileID: 0}
+  storeIcon: {fileID: 0}
+  viewIcon: {fileID: 0}
+  attachmentOffset: {x: 0, y: 0, z: 0}
+  containerName: Exosuit
+  onlyStoreWhenOpen: 0
+  openWhenContainerViewed: 0
+  size: {x: 1, y: 1}
+  hideItems: 1
+  attachItems: 1
+  startFilter: {fileID: 11400000, guid: c293aab5cc715fb4182e95a0c0e6baae, type: 2}
+  initialized: 1
+  maxDistance: 5
+  isOpenable: 0
+  isInteractive: 0
+  hasUi: 0
+  hasCustomInteraction: 0
+  hasCustomDisplay: 0
+  displays: []
+  numberDisplay: 0
+--- !u!114 &241491659311351190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289348138277843802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25696236470760b41b375e9b6939444c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachedContainer: {fileID: 0}
+  containerSync: {fileID: 0}
+  containerInteractive: {fileID: 0}
+  containerItemDisplay: {fileID: 0}
+  containerUi: {fileID: 0}
+  openIcon: {fileID: 0}
+  takeIcon: {fileID: 0}
+  storeIcon: {fileID: 0}
+  viewIcon: {fileID: 0}
+  attachmentOffset: {x: 0, y: 0, z: 0}
+  containerName: Glasses
+  onlyStoreWhenOpen: 0
+  openWhenContainerViewed: 0
+  size: {x: 1, y: 1}
+  hideItems: 1
+  attachItems: 1
+  startFilter: {fileID: 11400000, guid: 27ae84b7a7b5da2429350c1d20339898, type: 2}
+  initialized: 1
+  maxDistance: 5
+  isOpenable: 0
+  isInteractive: 0
+  hasUi: 0
+  hasCustomInteraction: 0
+  hasCustomDisplay: 0
+  displays: []
+  numberDisplay: 0
+--- !u!114 &8585070778684865660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289348138277843802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25696236470760b41b375e9b6939444c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachedContainer: {fileID: 0}
+  containerSync: {fileID: 0}
+  containerInteractive: {fileID: 0}
+  containerItemDisplay: {fileID: 0}
+  containerUi: {fileID: 0}
+  openIcon: {fileID: 0}
+  takeIcon: {fileID: 0}
+  storeIcon: {fileID: 0}
+  viewIcon: {fileID: 0}
+  attachmentOffset: {x: 0, y: 0, z: 0}
+  containerName: Mask
+  onlyStoreWhenOpen: 0
+  openWhenContainerViewed: 0
+  size: {x: 1, y: 1}
+  hideItems: 1
+  attachItems: 1
+  startFilter: {fileID: 11400000, guid: 2d0701c3dee46b54dbbb2f0246081ba0, type: 2}
+  initialized: 1
+  maxDistance: 5
+  isOpenable: 0
+  isInteractive: 0
+  hasUi: 0
+  hasCustomInteraction: 0
+  hasCustomDisplay: 0
+  displays: []
+  numberDisplay: 0
+--- !u!114 &8869517439305655391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289348138277843802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25696236470760b41b375e9b6939444c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachedContainer: {fileID: 0}
+  containerSync: {fileID: 0}
+  containerInteractive: {fileID: 0}
+  containerItemDisplay: {fileID: 0}
+  containerUi: {fileID: 0}
+  openIcon: {fileID: 0}
+  takeIcon: {fileID: 0}
+  storeIcon: {fileID: 0}
+  viewIcon: {fileID: 0}
+  attachmentOffset: {x: 0, y: 0, z: 0}
+  containerName: Gloves
+  onlyStoreWhenOpen: 0
+  openWhenContainerViewed: 0
+  size: {x: 1, y: 1}
+  hideItems: 1
+  attachItems: 1
+  startFilter: {fileID: 11400000, guid: d00f22c8e6044cd4a8ac831591d4365e, type: 2}
+  initialized: 1
+  maxDistance: 5
+  isOpenable: 0
+  isInteractive: 0
+  hasUi: 0
+  hasCustomInteraction: 0
+  hasCustomDisplay: 0
+  displays: []
+  numberDisplay: 0
+--- !u!114 &2260875416458480314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289348138277843802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25696236470760b41b375e9b6939444c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachedContainer: {fileID: 0}
+  containerSync: {fileID: 0}
+  containerInteractive: {fileID: 0}
+  containerItemDisplay: {fileID: 0}
+  containerUi: {fileID: 0}
+  openIcon: {fileID: 0}
+  takeIcon: {fileID: 0}
+  storeIcon: {fileID: 0}
+  viewIcon: {fileID: 0}
+  attachmentOffset: {x: 0, y: 0, z: 0}
+  containerName: Head
+  onlyStoreWhenOpen: 0
+  openWhenContainerViewed: 0
+  size: {x: 1, y: 1}
+  hideItems: 1
+  attachItems: 1
+  startFilter: {fileID: 11400000, guid: 2c9b78d1ecaf0c44889c1f7eb98de085, type: 2}
+  initialized: 1
+  maxDistance: 5
+  isOpenable: 0
+  isInteractive: 0
+  hasUi: 0
+  hasCustomInteraction: 0
+  hasCustomDisplay: 0
+  displays: []
+  numberDisplay: 0
+--- !u!114 &2515298200380975804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289348138277843802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25696236470760b41b375e9b6939444c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachedContainer: {fileID: 0}
+  containerSync: {fileID: 0}
+  containerInteractive: {fileID: 0}
+  containerItemDisplay: {fileID: 0}
+  containerUi: {fileID: 0}
+  openIcon: {fileID: 0}
+  takeIcon: {fileID: 0}
+  storeIcon: {fileID: 0}
+  viewIcon: {fileID: 0}
+  attachmentOffset: {x: 0, y: 0, z: 0}
+  containerName: Shoes
+  onlyStoreWhenOpen: 0
+  openWhenContainerViewed: 0
+  size: {x: 1, y: 1}
+  hideItems: 1
+  attachItems: 1
+  startFilter: {fileID: 11400000, guid: e6272cbef2d9ed9489358893eed0ed44, type: 2}
+  initialized: 1
+  maxDistance: 5
+  isOpenable: 0
+  isInteractive: 0
+  hasUi: 0
+  hasCustomInteraction: 0
+  hasCustomDisplay: 0
+  displays: []
+  numberDisplay: 0
 --- !u!1 &290878266594310021
 GameObject:
   m_ObjectHideFlags: 0
