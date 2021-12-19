@@ -4,6 +4,7 @@
 public class Trait : ScriptableObject
 {
     //Hash for identification
+    [SerializeField]
     protected int hash;
     [HideInInspector] public int Hash
     {
