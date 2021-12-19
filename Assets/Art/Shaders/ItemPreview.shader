@@ -64,7 +64,7 @@ Shader "Unlit/ItemPreview"
 
                 float NdotL = dot(i.worldNormal, lightVector);
                 float light = (smoothstep(0, 0.75, NdotL) * 0.525 + 0.475);
-                float4 shadow = float4(0,0,0.04f,0) * (1 - light);
+                float4 shadow = float4(0, 0, 0.0275f, 0) * (1 - light);
 
 
 //                float4 rimDot = (1 - dot(viewDir, i.worldNormal));

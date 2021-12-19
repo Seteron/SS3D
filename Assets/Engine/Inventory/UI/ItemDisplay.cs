@@ -42,16 +42,16 @@ namespace SS3D.Engine.Inventory.UI
         public void Start()
         {
             slotImage = GetComponent<Image>();
-            if(!outlineInner)
+            if (!outlineInner)
             {
                 outlineInner = ItemImage.gameObject.AddComponent<Outline>();
-                outlineInner.effectColor = new Color(0, 0, 0, 0.4f);
+                outlineInner.effectColor = new Color(0, 0, 0, 0.325f);
                 outlineInner.effectDistance = new Vector2(0.6f, 0.6f);
             }
-            if(!outlineOuter)
+            if (!outlineOuter)
             {
                 outlineInner = ItemImage.gameObject.AddComponent<Outline>();
-                outlineInner.effectColor = new Color(0, 0, 0, 0.2f);
+                outlineInner.effectColor = new Color(0, 0, 0, 0.175f);
                 outlineInner.effectDistance = new Vector2(0.8f, 0.8f);
             }
             if (item != null)

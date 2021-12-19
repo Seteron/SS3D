@@ -209,7 +209,7 @@ namespace SS3D.Engine.Utilities
 			}
 			finally
 			{
-				Object.DestroyImmediate(previewModel);
+				EditorAndRuntime.Destroy(previewModel);
 			}
 
 			return null;
@@ -395,13 +395,13 @@ namespace SS3D.Engine.Utilities
 			{
 #if DEBUG_BOUNDS
 			for( int i = 0; i < boundsDebugCubes.Count; i++ )
-				Object.DestroyImmediate( boundsDebugCubes[i].gameObject );
+				EditorAndRuntime.Destroy( boundsDebugCubes[i].gameObject );
 
 			boundsDebugCubes.Clear();
 #endif
 
 				if (shouldCloneModel)
-					Object.DestroyImmediate(previewObject.gameObject);
+					EditorAndRuntime.Destroy(previewObject.gameObject);
 				else
 				{
 					if (!wasActive)
