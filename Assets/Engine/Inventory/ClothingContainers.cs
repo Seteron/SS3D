@@ -32,7 +32,7 @@ namespace SS3D.Engine.Inventory
 
             foreach (ContainerDescriptor descriptor in descriptors)
             {
-                if (ClothingSlotNames.IndexOf(descriptor.containerName) != -1)
+                if (ClothingSlotNames.Contains(descriptor.containerName))
                 {
                     Containers.Add(descriptor.containerName, descriptor.attachedContainer);
                     descriptor.attachedContainer.ItemAttached += clothingDisplay.OnClothingAttached;
