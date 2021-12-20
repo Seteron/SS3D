@@ -44,7 +44,7 @@ namespace SS3D.Engine.Inventory.UI
 
         private void UpdateDisplay()
         {
-            ItemDisplay.Item = container.Container.Items.FirstOrDefault();
+            ItemDisplay.Item = container?.Container.Items.FirstOrDefault();
         }
 
         private void UpdateContainer(AttachedContainer newContainer)
@@ -59,8 +59,13 @@ namespace SS3D.Engine.Inventory.UI
                 container.Container.ContentsChanged -= ContainerContentsChanged;
             }
             
-            newContainer.Container.ContentsChanged += ContainerContentsChanged;
+            if (newContainer != null)
+            {
+                newContainer.Container.ContentsChanged += ContainerContentsChanged;
+            }
+
             container = newContainer;
+            UpdateDisplay();
         }
 
         private void ContainerContentsChanged(Container _, IEnumerable<Item> items, Container.ContainerChangeType changeType)
