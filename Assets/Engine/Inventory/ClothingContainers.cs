@@ -20,7 +20,7 @@ namespace SS3D.Engine.Inventory
 
         [NonSerialized]
         public static readonly List<string> ClothingSlotNames = new List<string> 
-        {"Ears", "Jumpsuit", "Exosuit", "Glasses", "Mask", "Gloves", "Head", "Shoes", "Accessory", "Suit Storage", "Belt", "Backpack"};
+        {"Ears", "Jumpsuit", "Exosuit", "Glasses", "Mask", "Gloves", "Head", "Shoes", "Accessory", "Belt", "Backpack"};
 
         [NonSerialized]
         public Dictionary<string, AttachedContainer> Containers = new Dictionary<string, AttachedContainer>();

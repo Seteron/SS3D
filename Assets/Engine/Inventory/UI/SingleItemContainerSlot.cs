@@ -78,6 +78,11 @@ namespace SS3D.Engine.Inventory.UI
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            if(Inventory == null || Container == null)
+            {
+                return;
+            }
+
             Inventory.ClientInteractWithSingleSlot(container);
 
             // When receiving a click on one of the hands of the UI, change the current active hand with the one clicked.
